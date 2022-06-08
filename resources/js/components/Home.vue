@@ -13,7 +13,7 @@ const products = ref([]);
 provide('products', products);
 
 const addProduct = (product) => {
-    products.value.push(product);
+    products.value = [product, ...products.value];
 }
 provide('addProduct', addProduct);
 
