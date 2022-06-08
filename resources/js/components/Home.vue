@@ -1,8 +1,11 @@
 <template>
-    <h1>{{ title }}</h1>
+    <Form/>
+    <Table/>
 </template>
 <script>
+import Table from "./Table";
 export default {
+    components: {Table},
     setup: () => ({
         title: 'welcome to our home'
     })
