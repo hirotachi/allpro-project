@@ -2,10 +2,11 @@ import './bootstrap';
 
 
 import { createApp } from 'vue'
-import HelloWorld from './components/Welcome'
+import Home from "./components/Home";
 
 const app = createApp({})
 
-app.component('hello-world', HelloWorld)
+// app.component('hello-world', HelloWorld)
+app.component('home', Home)
 
 app.mount('#app')

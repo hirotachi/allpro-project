@@ -4,7 +4,7 @@
 <script>
 export default {
     setup: () => ({
-        title: 'working stuff'
+        title: 'welcome to our home'
     })
 }
 </script>
