@@ -40,6 +40,7 @@ class ProductController extends Controller
             $categories = array_map(function($val){
                 return ["name"=>  $val];
             }, request()->get('categories'));
+            
             Category::upsert($categories, ["name"]);
             $categories = Category::whereIn('name', $categories)->get();
             $categoryIds = $categories->pluck('id');
