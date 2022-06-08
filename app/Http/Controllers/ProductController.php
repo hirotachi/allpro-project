@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductCollection;
+use App\Http\Resources\ProductResource;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -23,7 +25,7 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return ProductResource
      */
     public function store(Request $request)
     {
@@ -32,9 +34,18 @@ class ProductController extends Controller
             'description' => 'required',
             'price' => 'required',
         ]);
+
         $product = Product::create($validated);
-        $product->categories()->sync($request->get('categories'));
-        return $product;
+        if(request()->has('categories')){
+            $categories = array_map(function($val){
+                return ["name"=>  $val];
+            }, request()->get('categories'));
+            Category::upsert($categories, ["name"]);
+            $categories = Category::whereIn('name', $categories)->get();
+            $categoryIds = $categories->pluck('id');
+            $product->categories()->sync($categoryIds);
+        }
+        return new ProductResource($product);
     }
 
 
@@ -51,7 +62,15 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->update(request()->all());
-        $product->categories()->sync(request()->get('categories'));
+        if(request()->has('categories')){
+            $categories = array_map(function($val){
+                return ["name"=>  $val];
+            }, request()->get('categories'));
+            Category::upsert($categories);
+            $categories = Category::whereIn('name', $categories)->get();
+            $categoryIds = $categories->pluck('id');
+            $product->categories()->sync($categoryIds);
+        }
         return $product;
     }
 

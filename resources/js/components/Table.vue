@@ -3,7 +3,7 @@
         <div class="flex flex-col">
             <div class="w-full">
                 <div class="border-b border-gray-200 shadow">
-                    <table class="divide-y divide-gray-300 ">
+                    <table  class="divide-y divide-gray-300 ">
                         <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-2 text-xs text-gray-500">
@@ -13,50 +13,39 @@
                                 Name
                             </th>
                             <th class="px-6 py-2 text-xs text-gray-500">
-                                Email
+                                description
                             </th>
                             <th class="px-6 py-2 text-xs text-gray-500">
-                                Created_at
+                                price
                             </th>
                             <th class="px-6 py-2 text-xs text-gray-500">
-                                Edit
+                                categories
                             </th>
                             <th class="px-6 py-2 text-xs text-gray-500">
                                 Delete
                             </th>
                         </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-300">
-
-
-                        <tr class="whitespace-nowrap">
+                        <tbody v-if="!!products.length" class="bg-white divide-y divide-gray-300">
+                        <tr  v-for="product in products" :key="product.id">
                             <td class="px-6 py-4 text-sm text-gray-500">
-                                1
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900">
-                                    Jon doe
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-gray-500">jhondoe@example.com</div>
+                                {{product.id}}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
-                                2021-1-12
+                                {{product.name}}
                             </td>
-                            <td class="px-6 py-4">
-                                <span
-                                    class="text-sm text-gray-500 cursor-pointer"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-400" fill="none"
-                                         viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                </span>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{product.description}}
                             </td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{product.price}}$
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{product.categories.join(', ')}}
+                            </td>
+
                             <td class="px-6 py-4">
-                                <span class="text-sm text-gray-500 cursor-pointer">
+                                <span class="text-sm text-gray-500 cursor-pointer" @click="removeProduct(product.id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-400" fill="none"
                                          viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -66,19 +55,38 @@
                             </td>
                         </tr>
                         </tbody>
+
                     </table>
-                </div>
+                    <p v-if="!products.length" class="text-center text-gray-400 h-auto placeholder">there are not products created yet</p>
+            </div>
             </div>
         </div>
     </div>
 </template>
 
-<script>
-export default {
-    name: "table"
+<script setup>
+import {inject, onMounted} from "vue";
+const products = inject('products');
+const removeProductFromClient = inject('removeProduct');
+const removeProduct = (id) => {
+    fetch(`/api/products/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(res => res.json())
+        .then(() => {
+            removeProductFromClient(id);
+        })
+        .catch(err => console.log(err));
 }
 </script>
 
 <style scoped>
+
+.placeholder{
+    height: 2rem;
+}
 
 </style>
